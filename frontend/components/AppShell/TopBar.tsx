@@ -8,6 +8,7 @@ const titles: Record<string, string> = {
   "/motores": "Motores",
   "/reparaciones": "Reparaciones",
   "/lecturas": "Lecturas",
+  "/comparador": "Comparador",
   "/backups": "Backups",
   "/centros": "Centros de servicio",
   "/configuracion": "Configuración",

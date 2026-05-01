@@ -7,6 +7,7 @@ import {
   Boxes,
   Wrench,
   GaugeCircle,
+  LineChart,
   Repeat2,
   Building2,
   LogOut,
@@ -20,6 +21,7 @@ const items = [
   { label: "Motores",        href: "/motores",       icon: Boxes },
   { label: "Reparaciones",   href: "/reparaciones",  icon: Wrench },
   { label: "Lecturas",       href: "/lecturas",      icon: GaugeCircle },
+  { label: "Comparador",     href: "/comparador",    icon: LineChart },
   { label: "Backups",        href: "/backups",       icon: Repeat2 },
   { label: "Centros",        href: "/centros",       icon: Building2 },
 ];
