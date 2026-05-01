@@ -126,6 +126,16 @@ export type RepairInput = {
   fechaDespacho?: string;
 };
 
+export type SwitchoverEntry = {
+  id: string;
+  fecha: string;
+  primaryId: string;
+  backupId: string;
+  motivo: "Mantenimiento programado" | "Falla del primario" | "Prueba" | "Otro";
+  duracionMin?: number;
+  notas?: string;
+};
+
 export type ReadingInput = {
   assetId: string;
   consumoEnergia?: number;
