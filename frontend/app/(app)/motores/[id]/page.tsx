@@ -15,6 +15,7 @@ import { ErrorState } from "@/components/ErrorState";
 import { Modal } from "@/components/Modal";
 import { StatusDot, toneFromEstado } from "@/components/motor/StatusDot";
 import { ConsumptionChart } from "@/components/charts/ConsumptionChart";
+import { SensorsCard } from "@/components/sensor/SensorsCard";
 import { ReadingForm } from "@/components/reading/ReadingForm";
 import { RepairForm } from "@/components/repair/RepairForm";
 import { PrioridadBadge } from "@/components/repair/PrioridadBadge";
@@ -253,6 +254,8 @@ export default function MotorDetailPage({
           </dl>
         </Card>
       </div>
+
+      <SensorsCard assetId={id} />
 
       <Card className="p-5">
         <div className="mb-4 flex items-center justify-between">

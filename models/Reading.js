@@ -19,6 +19,13 @@ const readingSchema = new mongoose.Schema({
   observaciones: { type: String },
   organizacionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Organizacion', required: true, index: true },
   creadoPor: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario' },
+  sensorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Sensor', index: true },
+  source: {
+    type: String,
+    enum: ['manual', 'sensor', 'scada', 'import', 'mqtt'],
+    default: 'manual',
+    index: true,
+  },
 });
 
 module.exports = mongoose.model('Reading', readingSchema);

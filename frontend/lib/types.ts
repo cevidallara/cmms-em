@@ -126,6 +126,79 @@ export type RepairInput = {
   fechaDespacho?: string;
 };
 
+export type SensorProvider =
+  | "webhook"
+  | "dynamox"
+  | "tractian"
+  | "weg"
+  | "mqtt-generic"
+  | "manual"
+  | "otro";
+
+export type SensorType = "energy" | "vibration" | "temperature" | "rotation" | "general";
+
+export type SensorStatus = "online" | "offline" | "error" | "unknown";
+
+export type Sensor = {
+  _id: string;
+  organizacionId: string;
+  assetId: string | { _id: string; nombre: string; tipo: string; cliente?: string; sector?: string };
+  provider: SensorProvider;
+  externalId: string;
+  type: SensorType;
+  config?: Record<string, unknown>;
+  lastSeenAt?: string;
+  lastValue?: Record<string, unknown>;
+  status: SensorStatus;
+  createdAt?: string;
+};
+
+export type SensorInput = {
+  assetId: string;
+  provider: SensorProvider;
+  externalId: string;
+  type?: SensorType;
+  config?: Record<string, unknown>;
+};
+
+export const SENSOR_PROVIDERS: { value: SensorProvider; label: string; status: "active" | "beta" | "soon" }[] = [
+  { value: "webhook", label: "Webhook genérico", status: "active" },
+  { value: "mqtt-generic", label: "MQTT genérico", status: "soon" },
+  { value: "dynamox", label: "Dynamox", status: "soon" },
+  { value: "tractian", label: "Tractian", status: "soon" },
+  { value: "weg", label: "WEG", status: "soon" },
+  { value: "manual", label: "Manual", status: "active" },
+  { value: "otro", label: "Otro", status: "active" },
+];
+
+export const SENSOR_TYPES: { value: SensorType; label: string }[] = [
+  { value: "energy", label: "Energía / consumo" },
+  { value: "vibration", label: "Vibración" },
+  { value: "temperature", label: "Temperatura" },
+  { value: "rotation", label: "Rotación / RPM" },
+  { value: "general", label: "General" },
+];
+
+export type ApiKeyScope = "ingest:write" | "read";
+
+export type ApiKey = {
+  _id: string;
+  nombre: string;
+  prefix: string;
+  scopes: ApiKeyScope[];
+  lastUsedAt?: string;
+  revokedAt?: string | null;
+  createdAt: string;
+};
+
+// Devuelto solo al crear (incluye plaintext una sola vez)
+export type ApiKeyCreated = ApiKey & { key: string };
+
+export type ApiKeyInput = {
+  nombre: string;
+  scopes?: ApiKeyScope[];
+};
+
 export type CentroServicio = {
   id: string;
   nombre: string;

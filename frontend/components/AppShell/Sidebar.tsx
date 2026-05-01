@@ -13,6 +13,7 @@ import {
   LineChart,
   Repeat2,
   Building2,
+  Plug,
   LogOut,
   Settings,
   X,
@@ -28,6 +29,7 @@ const items = [
   { label: "Comparador",     href: "/comparador",    icon: LineChart },
   { label: "Backups",        href: "/backups",       icon: Repeat2 },
   { label: "Centros",        href: "/centros",       icon: Building2 },
+  { label: "Integraciones",  href: "/integraciones", icon: Plug },
 ];
 
 function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
