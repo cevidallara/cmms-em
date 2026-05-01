@@ -126,6 +126,22 @@ export type RepairInput = {
   fechaDespacho?: string;
 };
 
+export type CentroServicio = {
+  id: string;
+  nombre: string;
+  contacto?: string;
+  email?: string;
+  telefono?: string;
+  ubicacion?: string;
+  especialidad?: string;
+  rating?: number;
+  reparacionesCompletadas?: number;
+  notas?: string;
+  createdAt: string;
+};
+
+export type CentroServicioInput = Omit<CentroServicio, "id" | "createdAt">;
+
 export type SwitchoverEntry = {
   id: string;
   fecha: string;

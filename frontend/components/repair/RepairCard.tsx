@@ -1,8 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Wrench, Clock } from "lucide-react";
+import { Wrench, Clock, Building2 } from "lucide-react";
 import type { Repair } from "@/lib/types";
+import { useCentros } from "@/lib/hooks/useCentros";
+import { useRepairCentros } from "@/lib/hooks/useRepairCentros";
 import { PrioridadBadge } from "./PrioridadBadge";
 
 function timeAgo(iso: string | undefined) {
@@ -26,6 +28,11 @@ export function RepairCard({
   repair: Repair;
   onClick?: () => void;
 }) {
+  const centros = useCentros();
+  const repairCentros = useRepairCentros();
+  const centroId = repairCentros.centroOf(repair._id);
+  const centro = centroId ? centros.entries.find((c) => c.id === centroId) : null;
+
   const motorName =
     typeof repair.assetId === "object" && repair.assetId
       ? repair.assetId.nombre
@@ -62,6 +69,13 @@ export function RepairCard({
       {repair.descripcion && (
         <div className="mt-2.5 line-clamp-2 text-[12px] text-text-muted">
           {repair.descripcion}
+        </div>
+      )}
+
+      {centro && (
+        <div className="mt-2.5 flex items-center gap-1.5 rounded-md border border-arc/20 bg-arc/5 px-2 py-1">
+          <Building2 size={10} className="text-arc" />
+          <span className="truncate font-mono text-[10px] text-arc">{centro.nombre}</span>
         </div>
       )}
 
