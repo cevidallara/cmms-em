@@ -1,79 +1,4 @@
-const Sensor = require('../models/Sensor');
-const Reading = require('../models/Reading');
-
-const READING_FIELDS = [
-  'consumoEnergia',
-  'voltaje',
-  'corriente',
-  'horasOperacion',
-  'costoEnergia',
-  'moneda',
-  'factorCarga',
-  'factorPotencia',
-  'eficienciaEstimada',
-  'consumoAnualKWh',
-  'costoAnual',
-  'claseIEActual',
-  'observaciones',
-  'odometro',
-];
-
-function pickReadingFields(payload) {
-  const out = {};
-  for (const f of READING_FIELDS) {
-    if (payload[f] !== undefined && payload[f] !== null) out[f] = payload[f];
-  }
-  return out;
-}
-
-async function ingestOne(payload, organizacionId, source = 'sensor') {
-  const { externalId, provider, sensorId, fecha } = payload;
-
-  let sensor = null;
-  if (sensorId) {
-    sensor = await Sensor.findOne({ _id: sensorId, organizacionId });
-  } else if (externalId && provider) {
-    sensor = await Sensor.findOne({ externalId, provider, organizacionId });
-  } else {
-    return {
-      ok: false,
-      error: 'Se requiere sensorId o (externalId + provider)',
-      payload,
-    };
-  }
-
-  if (!sensor) {
-    return {
-      ok: false,
-      error: 'Sensor no encontrado. Registra el sensor primero en /integraciones.',
-      payload,
-    };
-  }
-
-  const readingData = pickReadingFields(payload);
-  const fechaObj = fecha ? new Date(fecha) : new Date();
-
-  const reading = await Reading.create({
-    ...readingData,
-    assetId: sensor.assetId,
-    organizacionId,
-    sensorId: sensor._id,
-    source,
-    fecha: fechaObj,
-  });
-
-  // Actualizar metadata del sensor (no bloquea la respuesta principal)
-  Sensor.updateOne(
-    { _id: sensor._id },
-    {
-      lastSeenAt: new Date(),
-      lastValue: readingData,
-      status: 'online',
-    }
-  ).catch((err) => console.error('Failed to update sensor metadata:', err.message));
-
-  return { ok: true, readingId: reading._id, sensorId: sensor._id };
-}
+const { ingestOne } = require('../services/ingestService');
 
 exports.ingest = async (req, res) => {
   try {
@@ -91,7 +16,9 @@ exports.ingest = async (req, res) => {
     }
 
     const results = await Promise.all(
-      payloads.map((p) => ingestOne(p, organizacionId, 'sensor').catch((err) => ({ ok: false, error: err.message })))
+      payloads.map((p) =>
+        ingestOne(p, organizacionId, 'sensor').catch((err) => ({ ok: false, error: err.message }))
+      )
     );
 
     const ingested = results.filter((r) => r.ok).length;

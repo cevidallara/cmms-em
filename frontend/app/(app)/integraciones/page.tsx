@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Plug, Plus, Key, Copy, Check, Trash2, Webhook, Cable } from "lucide-react";
+import { Plug, Plus, Key, Copy, Check, Trash2, Webhook, Cable, Radio } from "lucide-react";
 import { useApiKeys, useCreateApiKey, useDeleteApiKey } from "@/lib/queries/apikeys";
+import { useAuth } from "@/lib/auth";
 import { PageHeader } from "@/components/PageHeader";
 import { PageContainer } from "@/components/PageContainer";
 import { Card } from "@/components/ui/Card";
@@ -50,6 +51,7 @@ function CodeBlock({ children }: { children: string }) {
 }
 
 export default function IntegracionesPage() {
+  const { usuario } = useAuth();
   const apiKeysQuery = useApiKeys();
   const createKey = useCreateApiKey();
   const deleteKey = useDeleteApiKey();
@@ -82,6 +84,15 @@ export default function IntegracionesPage() {
 
   const exampleKey = "nik_live_TU_API_KEY_ACA";
   const ingestUrl = `${apiBase}/ingest`;
+  const orgId = usuario?.organizacionId ?? "<TU_ORG_ID>";
+
+  const mqttTopic = `nikolator/${orgId}/sensor-001/reading`;
+  const mqttPayload = `{"consumoEnergia":124.8,"voltaje":380,"corriente":18.4}`;
+  const mosquittoExample = `mosquitto_pub \\
+  -h <BROKER_HOST> -p 8883 --capath /etc/ssl/certs \\
+  -u <BROKER_USER> -P <BROKER_PASSWORD> \\
+  -t "${mqttTopic}" \\
+  -m '${mqttPayload}'`;
 
   const curlExample = `curl -X POST ${ingestUrl} \\
   -H "Authorization: Bearer ${exampleKey}" \\
@@ -246,6 +257,58 @@ export default function IntegracionesPage() {
             <strong className="text-text">Importante:</strong> el sensor con el{" "}
             <span className="font-mono text-spark">externalId</span> debe estar previamente
             registrado en el motor — andá al detalle del motor → "Sensores conectados" → "Conectar sensor".
+          </div>
+        </div>
+      </Card>
+
+      {/* MQTT */}
+      <Card className="p-5">
+        <div className="mb-4 flex items-center gap-2">
+          <Radio size={14} className="text-volt" />
+          <div className="text-[13px] font-medium text-text">MQTT broker</div>
+          <span className="rounded-md border border-success/30 bg-success/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-success">
+            activo
+          </span>
+        </div>
+
+        <div className="space-y-4">
+          <div className="text-[13px] text-text-muted">
+            Para sensores genéricos, gateways industriales y dispositivos IoT que hablan
+            MQTT. Publica al topic correspondiente y los datos llegan al motor en tiempo real.
+            Provider asumido: <span className="font-mono text-spark">mqtt-generic</span>.
+          </div>
+
+          <div>
+            <div className="mb-2 font-mono text-[10px] uppercase tracking-wider text-text-dim">
+              Topic pattern
+            </div>
+            <div className="rounded-lg border border-border bg-bg/60 px-3 py-2 font-mono text-[12px] text-text break-all">
+              nikolator/<span className="text-spark">{orgId}</span>/<span className="text-volt">{"<externalId>"}</span>/reading
+            </div>
+            <div className="mt-1 text-[11px] text-text-dim">
+              Tu organizacionId es <span className="font-mono text-text">{orgId}</span> · QoS recomendado: 1
+            </div>
+          </div>
+
+          <div>
+            <div className="mb-2 font-mono text-[10px] uppercase tracking-wider text-text-dim">
+              Payload (JSON)
+            </div>
+            <CodeBlock>{mqttPayload}</CodeBlock>
+          </div>
+
+          <div>
+            <div className="mb-2 font-mono text-[10px] uppercase tracking-wider text-text-dim">
+              Ejemplo con mosquitto
+            </div>
+            <CodeBlock>{mosquittoExample}</CodeBlock>
+          </div>
+
+          <div className="text-[12px] text-text-muted">
+            <strong className="text-text">Setup:</strong> el broker (HiveMQ Cloud o EMQX) y las
+            credenciales se configuran del lado del backend vía env vars{" "}
+            <span className="font-mono text-text-dim">MQTT_BROKER_URL / MQTT_USERNAME / MQTT_PASSWORD</span>.
+            El sensor con ese <span className="font-mono">externalId</span> debe estar registrado con provider <span className="font-mono">mqtt-generic</span>.
           </div>
         </div>
       </Card>

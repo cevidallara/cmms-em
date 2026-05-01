@@ -62,6 +62,9 @@ app.use('/api/apikeys', auth, require('./routes/apikeys'));
 // Endpoint público de ingesta (auth vía API key, no JWT)
 app.use('/api/ingest', require('./routes/ingest'));
 
+// SSE para tiempo real (auth vía ?token= en query)
+app.use('/api/events', require('./routes/events'));
+
 // --- 404 fallback ---
 app.use((req, res) => {
   res.status(404).json({ error: 'Ruta no encontrada' });
@@ -78,4 +81,14 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Nikolator backend corriendo en puerto ${PORT}`);
   console.log(`🔓 CORS origins: ${corsOrigins.join(', ')}`);
+
+  // Iniciar cliente MQTT si está configurado
+  require('./services/mqttClient').start();
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM recibido, cerrando…');
+  require('./services/mqttClient').stop();
+  process.exit(0);
 });

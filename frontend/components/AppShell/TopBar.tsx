@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { Bell, Menu, Search } from "lucide-react";
+import { LiveIndicator } from "@/components/LiveIndicator";
 
 const titles: Record<string, string> = {
   "/": "Dashboard",
@@ -39,6 +40,12 @@ export function TopBar({ onMenuClick }: { onMenuClick?: () => void }) {
         <h1 className="text-[15px] font-medium text-text">{title}</h1>
       </div>
       <div className="flex items-center gap-2">
+        <div className="hidden sm:block">
+          <LiveIndicator />
+        </div>
+        <div className="sm:hidden">
+          <LiveIndicator compact />
+        </div>
         <button className="grid h-8 w-8 place-items-center rounded-lg text-text-dim transition-colors hover:bg-elev/60 hover:text-text">
           <Search size={16} />
         </button>

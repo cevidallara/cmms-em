@@ -163,7 +163,7 @@ export type SensorInput = {
 
 export const SENSOR_PROVIDERS: { value: SensorProvider; label: string; status: "active" | "beta" | "soon" }[] = [
   { value: "webhook", label: "Webhook genérico", status: "active" },
-  { value: "mqtt-generic", label: "MQTT genérico", status: "soon" },
+  { value: "mqtt-generic", label: "MQTT genérico", status: "active" },
   { value: "dynamox", label: "Dynamox", status: "soon" },
   { value: "tractian", label: "Tractian", status: "soon" },
   { value: "weg", label: "WEG", status: "soon" },

@@ -28,6 +28,12 @@ services:
         sync: false
       - key: SENTRY_DSN
         sync: false
+      - key: MQTT_BROKER_URL
+        sync: false
+      - key: MQTT_USERNAME
+        sync: false
+      - key: MQTT_PASSWORD
+        sync: false
 
   # Web app / Frontend Next.js
   - type: web
