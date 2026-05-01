@@ -1,4 +1,18 @@
 {
+  "name": "nikolator-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Nikolator API — multi-tenant CMMS para flotas de motores eléctricos industriales.",
+  "main": "app.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js",
+    "seed:superadmin": "node scripts/seedSuperadmin.js",
+    "migrate:multitenant": "node scripts/migrateToMultitenant.js"
+  },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
