@@ -5,10 +5,11 @@ import { useMemo, useState } from "react";
 import { Plus, Search, Pencil, Trash2, Boxes } from "lucide-react";
 import { useMotors, useDeleteMotor } from "@/lib/queries/motors";
 import { PageHeader } from "@/components/PageHeader";
+import { PageContainer } from "@/components/PageContainer";
 import { Button } from "@/components/ui/Button";
-import { Field } from "@/components/ui/Field";
 import { Card } from "@/components/ui/Card";
-import { Spinner } from "@/components/ui/Spinner";
+import { TableSkeleton } from "@/components/ui/Skeleton";
+import { ErrorState } from "@/components/ErrorState";
 import { EmptyState } from "@/components/EmptyState";
 import { StatusDot, toneFromEstado } from "@/components/motor/StatusDot";
 
@@ -37,7 +38,7 @@ export default function MotoresPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <PageContainer>
       <PageHeader
         eyebrow="Flota"
         title="Motores"
@@ -83,15 +84,13 @@ export default function MotoresPage() {
       </div>
 
       {motorsQuery.isLoading ? (
-        <div className="flex justify-center py-16">
-          <Spinner size={24} className="text-volt" />
-        </div>
+        <TableSkeleton rows={6} cols={6} />
       ) : motorsQuery.isError ? (
-        <Card className="p-6">
-          <div className="text-[13px] text-danger">
-            Error al cargar motores: {(motorsQuery.error as Error).message}
-          </div>
-        </Card>
+        <ErrorState
+          title="No pudimos cargar los motores"
+          message={(motorsQuery.error as Error).message}
+          onRetry={() => motorsQuery.refetch()}
+        />
       ) : filtered.length === 0 ? (
         <EmptyState
           icon={<Boxes size={20} />}
@@ -203,6 +202,6 @@ export default function MotoresPage() {
           </div>
         </Card>
       )}
-    </div>
+    </PageContainer>
   );
 }

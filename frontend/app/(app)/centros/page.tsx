@@ -7,9 +7,10 @@ import { useCentros } from "@/lib/hooks/useCentros";
 import { useRepairCentros } from "@/lib/hooks/useRepairCentros";
 import { useRepairs } from "@/lib/queries/repairs";
 import { PageHeader } from "@/components/PageHeader";
+import { PageContainer } from "@/components/PageContainer";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Spinner } from "@/components/ui/Spinner";
+import { CardGridSkeleton, KpiSkeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/EmptyState";
 import { Modal } from "@/components/Modal";
 import { CentroAvatar } from "@/components/centro/CentroAvatar";
@@ -45,14 +46,17 @@ export default function CentrosPage() {
 
   if (!centros.hydrated || repairsQuery.isLoading) {
     return (
-      <div className="flex justify-center py-16">
-        <Spinner size={24} className="text-volt" />
-      </div>
+      <PageContainer>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+          {[...Array(4)].map((_, i) => <KpiSkeleton key={i} />)}
+        </div>
+        <CardGridSkeleton count={3} />
+      </PageContainer>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <PageContainer>
       <PageHeader
         eyebrow="Servicio externo"
         title="Centros de servicio"
@@ -280,7 +284,7 @@ export default function CentrosPage() {
         onUnassign={repairCentros.unassign}
         onClose={() => setAssigning(null)}
       />
-    </div>
+    </PageContainer>
   );
 }
 

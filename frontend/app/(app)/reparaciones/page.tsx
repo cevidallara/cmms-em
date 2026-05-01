@@ -11,9 +11,11 @@ import {
 } from "@/lib/queries/repairs";
 import { PROGRESOS, type Progreso, type Repair } from "@/lib/types";
 import { PageHeader } from "@/components/PageHeader";
+import { PageContainer } from "@/components/PageContainer";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Spinner } from "@/components/ui/Spinner";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { ErrorState } from "@/components/ErrorState";
 import { EmptyState } from "@/components/EmptyState";
 import { Modal } from "@/components/Modal";
 import { RepairCard } from "@/components/repair/RepairCard";
@@ -52,7 +54,7 @@ export default function ReparacionesPage() {
   );
 
   return (
-    <div className="space-y-6">
+    <PageContainer>
       <PageHeader
         eyebrow="Servicio"
         title="Reparaciones"
@@ -65,9 +67,28 @@ export default function ReparacionesPage() {
       />
 
       {repairsQuery.isLoading ? (
-        <div className="flex justify-center py-16">
-          <Spinner size={24} className="text-volt" />
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="rounded-2xl border border-border bg-elev/40 p-4 backdrop-blur-xl">
+              <Skeleton className="h-3 w-20" />
+              <div className="mt-3 space-y-2">
+                {[...Array(3)].map((__, j) => (
+                  <div key={j} className="rounded-xl border border-border bg-bg/40 p-3 space-y-2">
+                    <Skeleton className="h-2 w-16" />
+                    <Skeleton className="h-3 w-3/4" />
+                    <Skeleton className="h-2 w-1/2" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
+      ) : repairsQuery.isError ? (
+        <ErrorState
+          title="No pudimos cargar las reparaciones"
+          message={(repairsQuery.error as Error).message}
+          onRetry={() => repairsQuery.refetch()}
+        />
       ) : (repairsQuery.data?.length ?? 0) === 0 ? (
         <EmptyState
           icon={<Wrench size={20} />}
@@ -152,6 +173,6 @@ export default function ReparacionesPage() {
           </div>
         )}
       </Modal>
-    </div>
+    </PageContainer>
   );
 }

@@ -9,9 +9,11 @@ import { useReadings } from "@/lib/queries/readings";
 import { analyzeMotor, summarize, type MotorAnalysis } from "@/lib/utils/comparador";
 import { toCsv, downloadCsv } from "@/lib/utils/csv";
 import { PageHeader } from "@/components/PageHeader";
+import { PageContainer } from "@/components/PageContainer";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Spinner } from "@/components/ui/Spinner";
+import { KpiSkeleton, TableSkeleton } from "@/components/ui/Skeleton";
+import { ErrorState } from "@/components/ErrorState";
 import { EmptyState } from "@/components/EmptyState";
 import { Toggle } from "@/components/ui/Toggle";
 
@@ -95,15 +97,33 @@ export default function ComparadorPage() {
 
   if (motorsQuery.isLoading || readingsQuery.isLoading) {
     return (
-      <div className="flex justify-center py-16">
-        <Spinner size={24} className="text-volt" />
-      </div>
+      <PageContainer>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+          {[...Array(4)].map((_, i) => <KpiSkeleton key={i} />)}
+        </div>
+        <TableSkeleton rows={6} cols={6} />
+      </PageContainer>
+    );
+  }
+
+  if (motorsQuery.isError || readingsQuery.isError) {
+    return (
+      <PageContainer>
+        <ErrorState
+          title="No pudimos cargar el comparador"
+          message={((motorsQuery.error || readingsQuery.error) as Error)?.message}
+          onRetry={() => {
+            motorsQuery.refetch();
+            readingsQuery.refetch();
+          }}
+        />
+      </PageContainer>
     );
   }
 
   if ((motorsQuery.data?.length ?? 0) === 0) {
     return (
-      <div className="space-y-6">
+      <PageContainer>
         <PageHeader
           eyebrow="Análisis"
           title="Comparador costo / beneficio"
@@ -119,14 +139,14 @@ export default function ComparadorPage() {
             </Link>
           }
         />
-      </div>
+      </PageContainer>
     );
   }
 
   const monedaPrincipal = analyses.find((a) => a.hasData)?.moneda ?? "USD";
 
   return (
-    <div className="space-y-6">
+    <PageContainer>
       <PageHeader
         eyebrow="Análisis"
         title="Comparador costo / beneficio"
@@ -225,7 +245,7 @@ export default function ComparadorPage() {
           </div>
         </Card>
       )}
-    </div>
+    </PageContainer>
   );
 }
 

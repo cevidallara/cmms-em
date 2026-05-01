@@ -5,8 +5,10 @@ import { useMemo } from "react";
 import { GaugeCircle } from "lucide-react";
 import { useReadings } from "@/lib/queries/readings";
 import { PageHeader } from "@/components/PageHeader";
+import { PageContainer } from "@/components/PageContainer";
 import { Card } from "@/components/ui/Card";
-import { Spinner } from "@/components/ui/Spinner";
+import { TableSkeleton } from "@/components/ui/Skeleton";
+import { ErrorState } from "@/components/ErrorState";
 import { EmptyState } from "@/components/EmptyState";
 
 function fmtDate(iso?: string) {
@@ -30,7 +32,7 @@ export default function LecturasPage() {
   }, [readingsQuery.data]);
 
   return (
-    <div className="space-y-6">
+    <PageContainer>
       <PageHeader
         eyebrow="Datos"
         title="Lecturas"
@@ -38,9 +40,13 @@ export default function LecturasPage() {
       />
 
       {readingsQuery.isLoading ? (
-        <div className="flex justify-center py-16">
-          <Spinner size={24} className="text-volt" />
-        </div>
+        <TableSkeleton rows={6} cols={7} />
+      ) : readingsQuery.isError ? (
+        <ErrorState
+          title="No pudimos cargar las lecturas"
+          message={(readingsQuery.error as Error).message}
+          onRetry={() => readingsQuery.refetch()}
+        />
       ) : sorted.length === 0 ? (
         <EmptyState
           icon={<GaugeCircle size={20} />}
@@ -116,6 +122,6 @@ export default function LecturasPage() {
           </div>
         </Card>
       )}
-    </div>
+    </PageContainer>
   );
 }

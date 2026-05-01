@@ -2,15 +2,17 @@
 
 import Link from "next/link";
 import { useMemo } from "react";
-import { Plus, Boxes, ArrowUpRight } from "lucide-react";
+import { Plus, ArrowUpRight } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useMotors } from "@/lib/queries/motors";
 import { useReadings } from "@/lib/queries/readings";
 import { PageHeader } from "@/components/PageHeader";
+import { PageContainer } from "@/components/PageContainer";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Spinner } from "@/components/ui/Spinner";
-import { EmptyState } from "@/components/EmptyState";
+import { KpiSkeleton, Skeleton } from "@/components/ui/Skeleton";
+import { ErrorState } from "@/components/ErrorState";
+import { WelcomeBanner } from "@/components/onboarding/WelcomeBanner";
 import { StatusDot, toneFromEstado } from "@/components/motor/StatusDot";
 import type { Asset, Reading } from "@/lib/types";
 
@@ -80,14 +82,32 @@ export default function DashboardPage() {
 
   if (motorsQuery.isLoading) {
     return (
-      <div className="flex justify-center py-16">
-        <Spinner size={24} className="text-volt" />
-      </div>
+      <PageContainer>
+        <div className="space-y-3 pb-6 border-b border-border">
+          <Skeleton className="h-3 w-24" />
+          <Skeleton className="h-7 w-64" />
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+          {[...Array(4)].map((_, i) => <KpiSkeleton key={i} />)}
+        </div>
+      </PageContainer>
+    );
+  }
+
+  if (motorsQuery.isError) {
+    return (
+      <PageContainer>
+        <ErrorState
+          title="No pudimos cargar la flota"
+          message={(motorsQuery.error as Error).message}
+          onRetry={() => motorsQuery.refetch()}
+        />
+      </PageContainer>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <PageContainer>
       <PageHeader
         eyebrow="Dashboard"
         title={`Hola, ${usuario?.nombre} 👋`}
@@ -102,16 +122,7 @@ export default function DashboardPage() {
       />
 
       {motors.length === 0 ? (
-        <EmptyState
-          icon={<Boxes size={20} />}
-          title="Tu flota aún está vacía"
-          description="Agrega el primer motor para empezar a medir consumo, eficiencia y estado."
-          action={
-            <Link href="/motores/nuevo">
-              <Button iconLeft={<Plus size={14} />}>Crear primer motor</Button>
-            </Link>
-          }
-        />
+        <WelcomeBanner hasMotors={false} hasReadings={readings.length > 0} />
       ) : (
         <>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
@@ -161,7 +172,7 @@ export default function DashboardPage() {
           </Card>
         </>
       )}
-    </div>
+    </PageContainer>
   );
 }
 

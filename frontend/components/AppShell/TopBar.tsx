@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Bell, Search } from "lucide-react";
+import { Bell, Menu, Search } from "lucide-react";
 
 const titles: Record<string, string> = {
   "/": "Dashboard",
@@ -20,13 +20,21 @@ function titleFor(pathname: string) {
   return key ? titles[key] : "Nikolator";
 }
 
-export function TopBar() {
+export function TopBar({ onMenuClick }: { onMenuClick?: () => void }) {
   const pathname = usePathname();
   const title = titleFor(pathname);
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-bg/80 px-6 backdrop-blur-xl">
-      <div className="flex items-center gap-3">
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-bg/80 px-4 backdrop-blur-xl md:px-6">
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={onMenuClick}
+          className="grid h-8 w-8 place-items-center rounded-lg text-text-muted transition-colors hover:bg-elev/60 hover:text-text md:hidden"
+          aria-label="Abrir menú"
+        >
+          <Menu size={16} />
+        </button>
         <h1 className="text-[15px] font-medium text-text">{title}</h1>
       </div>
       <div className="flex items-center gap-2">

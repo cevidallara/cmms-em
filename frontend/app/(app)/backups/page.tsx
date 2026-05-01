@@ -8,9 +8,12 @@ import { useMotors, useUpdateMotor } from "@/lib/queries/motors";
 import { useSwitchoverLog } from "@/lib/hooks/useSwitchoverLog";
 import { buildBackupPairs, summarizeBackups } from "@/lib/utils/backups";
 import { PageHeader } from "@/components/PageHeader";
+import { PageContainer } from "@/components/PageContainer";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Spinner } from "@/components/ui/Spinner";
+import { KpiSkeleton, Skeleton } from "@/components/ui/Skeleton";
+import { ErrorState } from "@/components/ErrorState";
 import { EmptyState } from "@/components/EmptyState";
 import { AssignBackupModal } from "@/components/backup/AssignBackupModal";
 import { SwitchoverModal } from "@/components/backup/SwitchoverModal";
@@ -63,15 +66,32 @@ export default function BackupsPage() {
 
   if (motorsQuery.isLoading) {
     return (
-      <div className="flex justify-center py-16">
-        <Spinner size={24} className="text-volt" />
-      </div>
+      <PageContainer>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+          {[...Array(4)].map((_, i) => <KpiSkeleton key={i} />)}
+        </div>
+        <div className="rounded-2xl border border-border bg-elev/40 p-5 backdrop-blur-xl space-y-2">
+          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-12 w-full" />)}
+        </div>
+      </PageContainer>
+    );
+  }
+
+  if (motorsQuery.isError) {
+    return (
+      <PageContainer>
+        <ErrorState
+          title="No pudimos cargar los backups"
+          message={(motorsQuery.error as Error).message}
+          onRetry={() => motorsQuery.refetch()}
+        />
+      </PageContainer>
     );
   }
 
   if ((motorsQuery.data?.length ?? 0) === 0) {
     return (
-      <div className="space-y-6">
+      <PageContainer>
         <PageHeader
           eyebrow="Continuidad"
           title="Backups"
@@ -87,12 +107,12 @@ export default function BackupsPage() {
             </Link>
           }
         />
-      </div>
+      </PageContainer>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <PageContainer>
       <PageHeader
         eyebrow="Continuidad"
         title="Backups"
@@ -240,7 +260,7 @@ export default function BackupsPage() {
         onClose={() => setOpenSwitchover(false)}
         onSubmit={(entry) => log.add(entry)}
       />
-    </div>
+    </PageContainer>
   );
 }
 

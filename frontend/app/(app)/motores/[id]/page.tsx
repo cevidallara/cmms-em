@@ -7,9 +7,11 @@ import { useMotor } from "@/lib/queries/motors";
 import { useReadings, useCreateReading } from "@/lib/queries/readings";
 import { useRepairs, useCreateRepair } from "@/lib/queries/repairs";
 import { PageHeader } from "@/components/PageHeader";
+import { PageContainer } from "@/components/PageContainer";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Spinner } from "@/components/ui/Spinner";
+import { ErrorState } from "@/components/ErrorState";
 import { Modal } from "@/components/Modal";
 import { StatusDot, toneFromEstado } from "@/components/motor/StatusDot";
 import { ConsumptionChart } from "@/components/charts/ConsumptionChart";
@@ -70,8 +72,23 @@ export default function MotorDetailPage({
       </div>
     );
   }
+  if (motorQuery.isError) {
+    return (
+      <PageContainer>
+        <ErrorState
+          title="No pudimos cargar el motor"
+          message={(motorQuery.error as Error).message}
+          onRetry={() => motorQuery.refetch()}
+        />
+      </PageContainer>
+    );
+  }
   if (!motorQuery.data) {
-    return <div className="text-[13px] text-danger">Motor no encontrado.</div>;
+    return (
+      <PageContainer>
+        <ErrorState title="Motor no encontrado" message="Es posible que haya sido eliminado." />
+      </PageContainer>
+    );
   }
 
   const m = motorQuery.data;
@@ -83,7 +100,7 @@ export default function MotorDetailPage({
   const lastEficiencia = lastReading?.eficienciaEstimada;
 
   return (
-    <div className="space-y-6">
+    <PageContainer>
       <Link
         href="/motores"
         className="inline-flex items-center gap-1.5 text-[12px] text-text-muted transition-colors hover:text-text"
@@ -299,7 +316,7 @@ export default function MotorDetailPage({
           submitLabel="Crear reparación"
         />
       </Modal>
-    </div>
+    </PageContainer>
   );
 }
 
