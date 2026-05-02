@@ -42,7 +42,9 @@ services:
     plan: free
     region: oregon
     rootDir: frontend
-    buildCommand: npm install && npm run build
+    # --include=dev fuerza la instalación de devDependencies (tailwind, postcss, types)
+    # aunque NODE_ENV=production las saltearía por defecto
+    buildCommand: npm install --include=dev && npm run build
     startCommand: npm start
     autoDeploy: true
     envVars:
