@@ -49,6 +49,11 @@ export function LiveProvider({ children }: { children: ReactNode }) {
       queryClient.invalidateQueries({ queryKey: ["motors"] });
     });
 
+    es.addEventListener("anomaly.created", () => {
+      setLastEventAt(Date.now());
+      queryClient.invalidateQueries({ queryKey: ["anomalies"] });
+    });
+
     es.onopen = () => setConnected(true);
     es.onerror = () => {
       // EventSource auto-reconnects; reflejamos en UI

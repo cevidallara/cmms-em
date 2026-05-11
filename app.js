@@ -57,6 +57,7 @@ app.use('/api/assets', auth, tenantScope, require('./routes/assets'));
 app.use('/api/repairs', auth, tenantScope, require('./routes/repairs'));
 app.use('/api/readings', auth, tenantScope, require('./routes/readings'));
 app.use('/api/sensors', auth, tenantScope, require('./routes/sensors'));
+app.use('/api/anomalies', auth, tenantScope, require('./routes/anomalies'));
 app.use('/api/apikeys', auth, require('./routes/apikeys'));
 
 // Endpoint público de ingesta (auth vía API key, no JWT)
