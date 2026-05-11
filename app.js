@@ -68,6 +68,7 @@ app.use('/api/events', require('./routes/events'));
 
 // IA: chat + usage (requiere ANTHROPIC_API_KEY; si no está, las rutas devuelven 503)
 app.use('/api/ai', auth, require('./routes/ai'));
+app.use('/api/ai/onboard', auth, tenantScope, require('./routes/onboarding'));
 
 // --- 404 fallback ---
 app.use((req, res) => {

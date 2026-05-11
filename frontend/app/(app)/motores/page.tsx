@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { Plus, Search, Pencil, Trash2, Boxes } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, Boxes, Sparkles } from "lucide-react";
 import { useMotors, useDeleteMotor } from "@/lib/queries/motors";
 import { PageHeader } from "@/components/PageHeader";
 import { PageContainer } from "@/components/PageContainer";
@@ -44,11 +44,18 @@ export default function MotoresPage() {
         title="Motores"
         description="Inventario completo de motores eléctricos, bombas y compresores."
         actions={
-          <Link href="/motores/nuevo">
-            <Button size="md" iconLeft={<Plus size={14} />}>
-              Nuevo motor
-            </Button>
-          </Link>
+          <div className="flex gap-2">
+            <Link href="/motores/importar">
+              <Button size="md" variant="secondary" iconLeft={<Sparkles size={14} />}>
+                Importar con IA
+              </Button>
+            </Link>
+            <Link href="/motores/nuevo">
+              <Button size="md" iconLeft={<Plus size={14} />}>
+                Nuevo motor
+              </Button>
+            </Link>
+          </div>
         }
       />
 
