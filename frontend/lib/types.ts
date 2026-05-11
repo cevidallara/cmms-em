@@ -225,6 +225,33 @@ export type SwitchoverEntry = {
   notas?: string;
 };
 
+export type AdviceRecommendation =
+  | "mantener"
+  | "reparar"
+  | "reemplazar"
+  | "swap_a_backup"
+  | "datos_insuficientes";
+
+export type AdviceRiskLevel = "bajo" | "medio" | "alto";
+
+export type MotorAdvice = {
+  _id: string;
+  motorId: string;
+  organizacionId: string;
+  contentVersion: string;
+  recommendation: AdviceRecommendation;
+  recommendationLabel?: string;
+  reasoning: string;
+  savingsEstimateUsd: number;
+  paybackMonths?: number;
+  riskLevel: AdviceRiskLevel;
+  confidence: number;
+  supuestos: string[];
+  proximosPasos: string[];
+  modeloUsado?: string;
+  computedAt: string;
+};
+
 export type ReadingInput = {
   assetId: string;
   consumoEnergia?: number;
