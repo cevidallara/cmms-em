@@ -24,7 +24,7 @@ exports.editarMiOrg = async (req, res) => {
     const org = await Organizacion.findByIdAndUpdate(
       req.usuario.organizacionId,
       update,
-      { new: true }
+      { returnDocument: "after" }
     );
     if (!org) return res.status(404).json({ error: 'Organización no encontrada' });
     res.json(org);

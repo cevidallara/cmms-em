@@ -41,7 +41,7 @@ exports.update = async (req, res) => {
     const asset = await Asset.findOneAndUpdate(
       { _id: req.params.id, ...req.tenantFilter },
       req.body,
-      { new: true }
+      { returnDocument: "after" }
     );
     if (!asset) return res.status(404).json({ error: 'Activo no encontrado' });
     res.json(asset);

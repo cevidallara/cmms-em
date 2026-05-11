@@ -67,7 +67,7 @@ exports.update = async (req, res) => {
     const sensor = await Sensor.findOneAndUpdate(
       { _id: req.params.id, ...req.tenantFilter },
       update,
-      { new: true }
+      { returnDocument: "after" }
     );
     if (!sensor) return res.status(404).json({ error: 'Sensor no encontrado' });
     res.json(sensor);

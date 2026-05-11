@@ -57,7 +57,7 @@ exports.revoke = async (req, res) => {
     const apiKey = await ApiKey.findOneAndUpdate(
       { _id: req.params.id, organizacionId: req.usuario.organizacionId },
       { revokedAt: new Date() },
-      { new: true }
+      { returnDocument: "after" }
     ).select('-hashSha256');
     if (!apiKey) return res.status(404).json({ error: 'API key no encontrada' });
     res.json(apiKey);
