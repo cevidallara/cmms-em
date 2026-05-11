@@ -16,7 +16,6 @@ import { KpiSkeleton, TableSkeleton } from "@/components/ui/Skeleton";
 import { ErrorState } from "@/components/ErrorState";
 import { EmptyState } from "@/components/EmptyState";
 import { Toggle } from "@/components/ui/Toggle";
-import { AdviceCell } from "@/components/motor/AdviceCell";
 
 type SortKey = "costoMensual" | "consumoMensual" | "eficiencia" | "ahorroProyectado" | "nombre";
 type SortDir = "asc" | "desc";
@@ -213,7 +212,6 @@ export default function ComparadorPage() {
                   <ColHeader label="Eff." k="eficiencia" sortKey={sortKey} sortDir={sortDir} onSort={onSort} align="right" />
                   <th className="px-5 py-3 font-normal">Costo relativo</th>
                   <ColHeader label="Ahorro proy." k="ahorroProyectado" sortKey={sortKey} sortDir={sortDir} onSort={onSort} align="right" />
-                  <th className="px-5 py-3 font-normal">Recomendación IA</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -345,9 +343,6 @@ function Row({ a, i, maxCosto }: { a: MotorAnalysis; i: number; maxCosto: number
         ) : (
           <span className="text-text-dim">—</span>
         )}
-      </td>
-      <td className="px-5 py-3">
-        <AdviceCell motor={m} />
       </td>
     </motion.tr>
   );

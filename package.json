@@ -14,7 +14,6 @@
     "migrate:multitenant": "node scripts/migrateToMultitenant.js"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.40.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.0",
@@ -24,8 +23,6 @@
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^7.1.1",
     "mongoose": "^9.3.3",
-    "mqtt": "^5.15.1",
-    "multer": "^2.1.1",
-    "xlsx": "^0.18.5"
+    "mqtt": "^5.15.1"
   }
 }

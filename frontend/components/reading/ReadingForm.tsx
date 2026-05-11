@@ -19,8 +19,6 @@ export function ReadingForm({ assetId, onSubmit, onSuccess }: Props) {
     voltaje: undefined,
     corriente: undefined,
     horasOperacion: undefined,
-    factorCarga: undefined,
-    eficienciaEstimada: undefined,
     fecha: new Date().toISOString().slice(0, 16),
     observaciones: "",
   });
@@ -41,8 +39,6 @@ export function ReadingForm({ assetId, onSubmit, onSuccess }: Props) {
         voltaje: form.voltaje != null ? Number(form.voltaje) : undefined,
         corriente: form.corriente != null ? Number(form.corriente) : undefined,
         horasOperacion: form.horasOperacion != null ? Number(form.horasOperacion) : undefined,
-        factorCarga: form.factorCarga != null ? Number(form.factorCarga) : undefined,
-        eficienciaEstimada: form.eficienciaEstimada != null ? Number(form.eficienciaEstimada) : undefined,
         fecha: form.fecha ? new Date(form.fecha).toISOString() : undefined,
       });
       onSuccess?.();
@@ -108,30 +104,6 @@ export function ReadingForm({ assetId, onSubmit, onSuccess }: Props) {
           onChange={(e) =>
             set("horasOperacion", e.target.value ? Number(e.target.value) : undefined)
           }
-        />
-        <Field
-          label="Factor de carga (%)"
-          type="number"
-          step="0.1"
-          min="0"
-          max="100"
-          value={form.factorCarga ?? ""}
-          onChange={(e) =>
-            set("factorCarga", e.target.value ? Number(e.target.value) : undefined)
-          }
-          placeholder="ej. 75"
-        />
-        <Field
-          label="Eficiencia estimada (%)"
-          type="number"
-          step="0.1"
-          min="0"
-          max="100"
-          value={form.eficienciaEstimada ?? ""}
-          onChange={(e) =>
-            set("eficienciaEstimada", e.target.value ? Number(e.target.value) : undefined)
-          }
-          placeholder="ej. 85"
           containerClassName="col-span-2"
         />
         <Field

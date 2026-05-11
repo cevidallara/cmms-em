@@ -7,7 +7,6 @@ const organizacionSchema = new mongoose.Schema({
   direccion: { type: String },
   telefono: { type: String },
   activa: { type: Boolean, default: true },
-  aiBudgetUsd: { type: Number },
   creadoEn: { type: Date, default: Date.now },
 });
 

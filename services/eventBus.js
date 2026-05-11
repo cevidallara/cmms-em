@@ -6,7 +6,6 @@
  * recibió el ingest. Para multi-instancia, reemplazar por Redis pub/sub.
  */
 const subscribers = new Map(); // orgId (string) → Set<callback>
-const allSubscribers = new Set(); // wildcard listeners (superadmin, dashboards)
 
 function subscribe(orgId, callback) {
   const key = String(orgId);
@@ -22,37 +21,16 @@ function subscribe(orgId, callback) {
   };
 }
 
-/**
- * Suscribe a TODOS los eventos de TODAS las orgs.
- * Usado por superadmin / dashboards globales. En producción, considerar
- * permission gating si hay muchas orgs (volumen alto).
- */
-function subscribeAll(callback) {
-  allSubscribers.add(callback);
-  return function unsubscribe() {
-    allSubscribers.delete(callback);
-  };
-}
-
 function publish(orgId, event) {
-  let delivered = 0;
   const set = subscribers.get(String(orgId));
-  if (set) {
-    for (const cb of set) {
-      try {
-        cb(event);
-        delivered += 1;
-      } catch (err) {
-        console.error('eventBus publish error:', err.message);
-      }
-    }
-  }
-  for (const cb of allSubscribers) {
+  if (!set) return 0;
+  let delivered = 0;
+  for (const cb of set) {
     try {
-      cb({ ...event, _orgId: String(orgId) });
+      cb(event);
       delivered += 1;
     } catch (err) {
-      console.error('eventBus publish (all) error:', err.message);
+      console.error('eventBus publish error:', err.message);
     }
   }
   return delivered;
@@ -61,7 +39,7 @@ function publish(orgId, event) {
 function stats() {
   let total = 0;
   for (const set of subscribers.values()) total += set.size;
-  return { orgs: subscribers.size, totalSubscribers: total, wildcardSubscribers: allSubscribers.size };
+  return { orgs: subscribers.size, totalSubscribers: total };
 }
 
-module.exports = { subscribe, subscribeAll, publish, stats };
+module.exports = { subscribe, publish, stats };

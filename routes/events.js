@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const jwt = require('jsonwebtoken');
-const { subscribe, subscribeAll } = require('../services/eventBus');
+const { subscribe } = require('../services/eventBus');
 
 /**
  * Server-Sent Events. Auth vía query param ?token=<jwt>
@@ -25,8 +25,7 @@ router.get('/', (req, res) => {
   }
 
   const organizacionId = payload.organizacionId;
-  const isSuperadmin = payload.rol === 'superadmin';
-  if (!organizacionId && !isSuperadmin) {
+  if (!organizacionId) {
     return res.status(403).end('Usuario sin organización');
   }
 
@@ -40,19 +39,14 @@ router.get('/', (req, res) => {
   res.write('retry: 5000\n\n');
   res.write(`event: connected\ndata: ${JSON.stringify({ ts: Date.now() })}\n\n`);
 
-  // Superadmin se suscribe a TODOS los eventos (wildcard).
-  // Empresa/centro se suscriben solo a su org.
-  const sseHandler = (event) => {
+  const unsubscribe = subscribe(organizacionId, (event) => {
     try {
       res.write(`event: ${event.type}\n`);
       res.write(`data: ${JSON.stringify(event.payload)}\n\n`);
     } catch (err) {
       console.error('SSE write error:', err.message);
     }
-  };
-  const unsubscribe = isSuperadmin
-    ? subscribeAll(sseHandler)
-    : subscribe(organizacionId, sseHandler);
+  });
 
   const heartbeat = setInterval(() => {
     try {

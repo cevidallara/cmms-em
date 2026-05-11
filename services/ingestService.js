@@ -1,8 +1,6 @@
 const Sensor = require('../models/Sensor');
 const Reading = require('../models/Reading');
 const eventBus = require('./eventBus');
-const anomalyDetector = require('./anomalyDetector');
-const { narrateAnomaly } = require('./anomalyNarrator');
 
 const READING_FIELDS = [
   'consumoEnergia',
@@ -90,19 +88,6 @@ async function ingestOne(payload, organizacionId, source = 'sensor') {
       ...readingData,
     },
   });
-
-  // Detección de anomalías fire-and-forget — no bloquea el ack al sensor
-  anomalyDetector
-    .evaluateReading(reading)
-    .then((anomalies) => {
-      // Disparar narración LLM async para cada anomalía nueva
-      for (const a of anomalies) {
-        narrateAnomaly(a._id).catch((err) =>
-          console.error('narrateAnomaly bg error:', err.message)
-        );
-      }
-    })
-    .catch((err) => console.error('anomaly evaluateReading error:', err.message));
 
   return { ok: true, readingId: reading._id, sensorId: sensor._id };
 }

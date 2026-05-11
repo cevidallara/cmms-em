@@ -77,7 +77,7 @@ exports.update = async (req, res) => {
       const repair = await Repair.findOneAndUpdate(
         { _id: req.params.id, ...getFilter(req) },
         update,
-        { returnDocument: "after" }
+        { new: true }
       );
       if (!repair) return res.status(404).json({ error: 'Reparación no encontrada' });
       return res.json(repair);
@@ -87,7 +87,7 @@ exports.update = async (req, res) => {
     const repair = await Repair.findOneAndUpdate(
       { _id: req.params.id, ...getFilter(req) },
       req.body,
-      { returnDocument: "after" }
+      { new: true }
     );
     if (!repair) return res.status(404).json({ error: 'Reparación no encontrada' });
     res.json(repair);

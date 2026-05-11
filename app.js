@@ -57,7 +57,6 @@ app.use('/api/assets', auth, tenantScope, require('./routes/assets'));
 app.use('/api/repairs', auth, tenantScope, require('./routes/repairs'));
 app.use('/api/readings', auth, tenantScope, require('./routes/readings'));
 app.use('/api/sensors', auth, tenantScope, require('./routes/sensors'));
-app.use('/api/anomalies', auth, tenantScope, require('./routes/anomalies'));
 app.use('/api/apikeys', auth, require('./routes/apikeys'));
 
 // Endpoint público de ingesta (auth vía API key, no JWT)
@@ -65,10 +64,6 @@ app.use('/api/ingest', require('./routes/ingest'));
 
 // SSE para tiempo real (auth vía ?token= en query)
 app.use('/api/events', require('./routes/events'));
-
-// IA: chat + usage (requiere ANTHROPIC_API_KEY; si no está, las rutas devuelven 503)
-app.use('/api/ai', auth, require('./routes/ai'));
-app.use('/api/ai/onboard', auth, tenantScope, require('./routes/onboarding'));
 
 // --- 404 fallback ---
 app.use((req, res) => {
@@ -86,9 +81,6 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Nikolator backend corriendo en puerto ${PORT}`);
   console.log(`🔓 CORS origins: ${corsOrigins.join(', ')}`);
-  if (!process.env.ANTHROPIC_API_KEY) {
-    console.warn('⚠️  ANTHROPIC_API_KEY no configurada — endpoints /api/ai responden 503');
-  }
 
   // Iniciar cliente MQTT si está configurado
   require('./services/mqttClient').start();
